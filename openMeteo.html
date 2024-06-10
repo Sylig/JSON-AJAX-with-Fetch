@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Weather App</title>
+  <style>
+    /* Styles for the weather information */
+    .weather-info {
+      text-align: center;
+    }
+    .title {
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1 class="title">Current Weather in Paris:</h1>
+  <div class="weather-info" id="weatherInfo"></div>
+</div>
+
+  <script>
+    // Function to fetch weather data from the API
+    async function fetchWeather() {
+   
+      const apiUrl = "https://api.open-meteo.com/v1/forecast?latitude=48.8534&longitude=2.3488&current=temperature_2m,relative_humidity_2m,rain,wind_speed_10m&current=temperature_2m,relative_humidity_2m,rain,wind_speed_10m&timezone=Europe%2FParis"
+      try {
+        // Fetch weather data from the API
+        const response = await fetch(apiUrl);
+        const data = await response.json();
+        // Call the displayWeather function with the fetched data
+        displayWeather(data);
+      } catch (error) {
+         // Log an error message if fetching or parsing fails
+        console.error('Error fetching weather data:', error);
+      }
+    }
+
+    // Function to display weather information
+    function displayWeather(data) {
+    // Extract the current time from the weather data and convert it to a localized string
+      const time = new Date(data.current.time).toLocaleString();
+      // Extract the current temperature from the weather data
+      const temperature = data.current.temperature_2m;
+      // Extract the current wind speed from the weather data
+      const windSpeed = data.current.wind_speed_10m;
+      // Extract the current rainfall amount from the weather data
+      const rain = data.current.rain;
+      // Extract the current humidity amount from the weather data
+      const humidity = data.current.relative_humidity_2m;
+
+      // Get the HTML element with the ID 'weatherInfo' where we will display the weather information
+      const weatherInfo = document.getElementById('weatherInfo');
+      // Populate the weatherInfo HTML element with the extracted weather data
+      weatherInfo.innerHTML = `
+        <p>Time: ${time}</p>
+        <p>Temperature: ${temperature} °C</p>
+        <p>Wind Speed: ${windSpeed} m/s</p>
+        <p>Rain: ${rain} mm</p>
+        <p>Humidity: ${humidity}%</p>
+      `;
+    }
+
+    // Call the fetchWeather function 
+   fetchWeather();
+  </script>
+</body>
+</html>

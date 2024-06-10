@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Budgeting Website</title>
+  </head>
+  <body>
+    <h1>Budgeting Website</h1>
+    <h3>Incomes</h3>
+    <ul id="myIncomes"></ul>
+    <h3>Expenses</h3>
+    <ul id="myExpenses"></ul>
+    <h3>Disposable Income</h3>
+    <ul id="addSavings"></ul>
+
+    <button onclick="addIncome()">Add Income</button>
+    <button onclick="addExpense()">Add Expense</button>
+    <button onclick="addSavings()">Add Saving</button>
+
+    <script>
+      
+      // Define class for income
+      class Income {
+        constructor(name, amount, recurring) {
+          this.name = name;
+          this.amount = amount;
+          this.recurring = recurring;
+        }
+      }
+
+      // Define class for expense
+      class Expense {
+        constructor(name, amount, recurring) {
+          this.name = name;
+          this.amount = amount;
+          this.recurring = recurring;
+        }
+      }
+
+      // Create initial instances of income and expenses
+      let incomes = [
+        new Income("Salary", 4000, true),
+        new Income("Freelance work", 1000, false),
+        new Income("Investment income", 500, true),
+        new Income("Rental income", 800, true),
+        new Income("Part-time job", 600, false),
+      ];
+
+      let expenses = [
+        new Expense("Rent", 1500, true),
+        new Expense("Utilities", 250, true),
+        new Expense("Groceries", 350, true),
+        new Expense("Transportation", 150, true),
+        new Expense("Entertainment", 200, false),
+      ];
+
+      if (sessionStorage.getItem("incomes") == null) {
+        sessionStorage.setItem("incomes", JSON.stringify(incomes));
+      }
+      if (sessionStorage.getItem("expenses") == null) {
+        sessionStorage.setItem("expenses", JSON.stringify(expenses));
+      }
+
+      const storedIncomes = JSON.parse(sessionStorage.getItem("incomes"));
+      const storedExpenses = JSON.parse(sessionStorage.getItem("expenses"));
+
+      // Function to prompt user to add an income
+      function addIncome() {
+        const name = prompt("Enter the name of the income:");
+        const amount = parseFloat(prompt("Enter the amount:"));
+        const recurring = confirm(
+          "Is this income recurring? Click OK for Yes, Cancel for No."
+        );
+        const newIncome = new Income(name, amount, recurring);
+        incomes.push(newIncome);
+        list_incomes = document.getElementById("myIncomes");
+        list_incomes.innerText = "";
+        for (i = 0; i < incomes.length; i++) {
+          let li = document.createElement("li");
+
+          li.innerText =
+            incomes[i].name +
+            " " +
+            incomes[i].amount +
+            " " +
+            incomes[i].recurring;
+          list_incomes.appendChild(li);
+        }
+
+        sessionStorage.setItem("incomes", JSON.stringify(incomes));
+      }
+
+      // Function to prompt user to add an expense
+      function addExpense() {
+        const name = prompt("Enter the name of the expense:");
+        const amount = parseFloat(prompt("Enter the amount:"));
+        const recurring = confirm(
+          "Is this expense recurring? Click OK for Yes, Cancel for No."
+        );
+        const newExpense = new Expense(name, amount, recurring);
+        expenses.push(newExpense);
+        list_expenses = document.getElementById("myExpenses");
+        list_expenses.innerText = "";
+        for (i = 0; i < expenses.length; i++) {
+          let li = document.createElement("li");
+
+          li.innerText =
+            expenses[i].name +
+            " " +
+            expenses[i].amount +
+            " " +
+            expenses[i].recurring;
+          list_expenses.appendChild(li);
+        }
+        sessionStorage.setItem("expenses", JSON.stringify(expenses));
+      }
+
+      // Get element
+      list_incomes = document.getElementById("myIncomes");
+      for (i = 0; i < storedIncomes.length; i++) {
+        let li = document.createElement("li");
+        li.innerText =
+          storedIncomes[i].name +
+          " " +
+          storedIncomes[i].amount +
+          " " +
+          storedIncomes[i].recurring;
+        list_incomes.appendChild(li);
+      }
+
+      list_expenses = document.getElementById("myExpenses");
+      for (i = 0; i < storedExpenses.length; i++) {
+        let li = document.createElement("li");
+        li.innerText =
+          storedExpenses[i].name +
+          " " +
+          storedExpenses[i].amount +
+          " " +
+          storedExpenses[i].recurring;
+        list_expenses.appendChild(li);
+      }
+
+      function addSavings() {
+
+        // Calculate total income
+        let incomeTotal = incomes.reduce(
+          (total, income) => total + income.amount,
+          0
+        );
+
+        // Calculate total expenses
+        let expenseTotal = expenses.reduce(
+          (total, expense) => total + expense.amount,
+          0
+        );
+
+        // Calculate disposable income
+        let disposableIncome = incomeTotal - expenseTotal;
+
+        // Show the user how much disposable income there is.
+        //Ask user how much of the disposable income they want to put in savings.
+        let savings = parseFloat(
+          prompt(
+            `You have ${disposableIncome} disposable income. How much of your disposable income would you like to put into savings?`
+          )
+        );
+
+        // Calculate disposable income left after savings
+        let disposableIncomeLeft = disposableIncome - savings;
+
+        // Display total disposable income and disposable income left after savings
+        alert(
+          "Your total disposable income is $" +
+            disposableIncome +
+            ". After savings, your total disposable income is $" +
+            disposableIncomeLeft +
+            "."
+        );
+      }
+    </script>
+  </body>
+</html>
